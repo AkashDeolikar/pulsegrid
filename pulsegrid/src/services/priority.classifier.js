@@ -17,7 +17,7 @@ const LOW_KEYWORDS = [
 ];
 
 const URGENT_TOPICS = ['payments', 'alerts', 'errors', 'security', 'auth'];
-const LOW_TOPICS    = ['analytics', 'logs', 'reports', 'metrics', 'digest'];
+const LOW_TOPICS = ['analytics', 'logs', 'reports', 'metrics', 'digest'];
 
 const scorePayload = (payload) => {
   const text = JSON.stringify(payload).toLowerCase();
@@ -32,22 +32,29 @@ const scorePayload = (payload) => {
   });
 
   // High monetary value = higher urgency
-  const amounts = text.match(/\d+/g)?.map(Number) || [];
-  const maxAmount = Math.max(...amounts, 0);
-  if (maxAmount > 10000) score += 8;
-  else if (maxAmount > 1000) score += 3;
+  // const amounts = text.match(/\d+/g)?.map(Number) || [];
+  // const maxAmount = Math.max(...amounts, 0);
+  // if (maxAmount > 10000) score += 8;
+  // else if (maxAmount > 1000) score += 3;
+  if (payload.amount && payload.amount > 20000) {
+    score += 15;
+  } else if (payload.amount && payload.amount > 10000) {
+    score += 10;
+  } else if (payload.amount && payload.amount > 1000) {
+    score += 3;
+  }
 
   // Status field signals
-  if (text.includes('"status":"failed"'))   score += 15;
-  if (text.includes('"status":"error"'))    score += 15;
-  if (text.includes('"status":"success"'))  score -= 2;
+  if (text.includes('"status":"failed"')) score += 15;
+  if (text.includes('"status":"error"')) score += 15;
+  if (text.includes('"status":"success"')) score -= 2;
 
   return score;
 };
 
 const classifyPriority = (topic = '', payload = {}, manualPriority = null) => {
   // Manual override always wins — producer knows their domain best
-  if (manualPriority && ['urgent','normal','low'].includes(manualPriority)) {
+  if (manualPriority && ['urgent', 'normal', 'low'].includes(manualPriority)) {
     return { priority: manualPriority, source: 'manual', confidence: 1.0 };
   }
 
@@ -64,8 +71,8 @@ const classifyPriority = (topic = '', payload = {}, manualPriority = null) => {
   const score = scorePayload(payload);
 
   if (score >= 10) return { priority: 'urgent', source: 'classifier', confidence: Math.min(score / 30, 1) };
-  if (score <= -5) return { priority: 'low',    source: 'classifier', confidence: 0.7 };
-  return             { priority: 'normal',  source: 'classifier', confidence: 0.6 };
+  if (score <= -5) return { priority: 'low', source: 'classifier', confidence: 0.7 };
+  return { priority: 'normal', source: 'classifier', confidence: 0.6 };
 };
 
 module.exports = { classifyPriority };

@@ -187,7 +187,7 @@ those events are permanently lost. Clear-after is the only safe order.
 
 ## Author
 
-Akash Deolikar · [GitHub](https://github.com/AkashDeolikar) · [LinkedIn](#)
+Akash Deolikar · [GitHub](https://github.com/AkashDeolikar) · [LinkedIn](https://in.linkedin.com/in/akash-deolikar-591122222)
 
 Built as a demonstration of distributed systems engineering for backend
 and platform engineering roles.
