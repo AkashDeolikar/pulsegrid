@@ -3,9 +3,14 @@ const config = require('../config');
 
 const pool = new Pool(config.db);
 
-pool.on('connect', () => {
-  console.log('PostgreSQL connected');
-});
+// pool.on('connect', () => {
+//   console.log('PostgreSQL connected');
+// });
+if (process.env.NODE_ENV !== 'test') {
+  pool.on('connect', () => {
+    console.log('PostgreSQL connected');
+  });
+}
 
 pool.on('error', (err) => {
   console.error('PostgreSQL pool error:', err);
@@ -15,4 +20,8 @@ pool.on('error', (err) => {
 module.exports = {
   query: (text, params) => pool.query(text, params),
   getClient: () => pool.connect(),
+
+   close: async () => {
+    await pool.end();
+  }
 };

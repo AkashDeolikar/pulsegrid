@@ -23,6 +23,9 @@ const analyticsRoutes = require('./routes/analytics.routes');
 
 const { apiLimiter, authLimiter, publishLimiter } = require('./middleware/rate.limiter');
 
+const { initRedis } = require('./config/redis');
+initRedis();
+
 app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
