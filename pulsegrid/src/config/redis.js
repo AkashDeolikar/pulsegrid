@@ -65,6 +65,11 @@ module.exports = {
   },
 };
 
+// const client = process.env.REDIS_URL
+//   ? new Redis(process.env.REDIS_URL)
+//   : new Redis({ host: config.redis.host, port: config.redis.port, ...retryStrategy });
+
+
 // const Redis = require('ioredis');
 // const config = require('./index');
 

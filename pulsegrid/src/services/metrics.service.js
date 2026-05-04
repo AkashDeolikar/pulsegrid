@@ -1,4 +1,4 @@
-const { redisClient } = require('../config/redis');
+const redis = require('../config/redis');
 
 const METRICS_TTL = 60 * 60 * 24; // 24 hours
 
@@ -10,7 +10,7 @@ const recordEvent = async (eventId, topic, priority, deliveryMs) => {
   const now = Date.now();
   const minuteBucket = Math.floor(now / 60000); // current minute as integer
 
-  const pipeline = redisClient.pipeline();
+  const pipeline = redis.redisClient.pipeline();
 
   // 1. Throughput: increment events in this minute bucket
   pipeline.incr(`metrics:throughput:${minuteBucket}`);
@@ -40,7 +40,7 @@ const recordEvent = async (eventId, topic, priority, deliveryMs) => {
 const getThroughput = async (minutes = 60) => {
   const now = Date.now();
   const currentBucket = Math.floor(now / 60000);
-  const pipeline = redisClient.pipeline();
+  const pipeline = redis.redisClient.pipeline();
 
   for (let i = minutes - 1; i >= 0; i--) {
     pipeline.get(`metrics:throughput:${currentBucket - i}`);
@@ -58,7 +58,7 @@ const getThroughput = async (minutes = 60) => {
  * Calculate P50, P95, P99 delivery latency from Redis sorted set.
  */
 const getLatencyPercentiles = async () => {
-  const entries = await redisClient.zrange('metrics:latency', 0, -1);
+  const entries = await redis.redisClient.zrange('metrics:latency', 0, -1);
 
   if (entries.length === 0) {
     return { p50: 0, p95: 0, p99: 0, samples: 0 };
@@ -83,10 +83,10 @@ const getLatencyPercentiles = async () => {
  * Get per-topic event counts.
  */
 const getTopicBreakdown = async () => {
-  const keys = await redisClient.keys('metrics:topic:*');
+  const keys = await redis.redisClient.keys('metrics:topic:*');
   if (keys.length === 0) return [];
 
-  const pipeline = redisClient.pipeline();
+  const pipeline = redis.redisClient.pipeline();
   keys.forEach(k => pipeline.get(k));
   const results = await pipeline.exec();
 
@@ -101,7 +101,7 @@ const getTopicBreakdown = async () => {
  */
 const getPriorityBreakdown = async () => {
   const priorities = ['urgent', 'normal', 'low'];
-  const pipeline = redisClient.pipeline();
+  const pipeline = redis.redisClient.pipeline();
   priorities.forEach(p => pipeline.get(`metrics:priority:${p}`));
   const results = await pipeline.exec();
 

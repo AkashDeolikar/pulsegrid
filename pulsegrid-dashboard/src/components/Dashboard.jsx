@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useAnomalySocket } from '../hooks/useAnomalysocket';
 import {
@@ -17,13 +18,10 @@ const S = {
   bigNum: { fontSize:28, fontWeight:700 },
 };
 
-const COLORS = { urgent:'#fc8181', normal:'#63b3ed', low:'#68d391' };
-
-const StatCard = ({ label, value, sub }) => (
+const StatCard = ({ label, value }) => (
   <div style={S.card}>
     <div style={S.cardTitle}>{label}</div>
     <div style={S.bigNum}>{value ?? '—'}</div>
-    {sub && <div style={S.meta}>{sub}</div>}
   </div>
 );
 
@@ -41,12 +39,39 @@ export default function Dashboard({ token, onLogout }) {
   const { data, loading, error, lastUpdated } = useAnalytics(token);
   const { alerts, wsStatus } = useAnomalySocket(token);
 
+  // 🔥 UNIVERSAL THROUGHPUT FIX
+  const throughputData = useMemo(() => {
+    const raw = data?.throughput;
+
+    if (!raw) return [];
+
+    let arr = [];
+
+    if (Array.isArray(raw)) arr = raw;
+    else if (Array.isArray(raw.throughput)) arr = raw.throughput;
+    else if (Array.isArray(raw.data)) arr = raw.data;
+
+    return arr.map(d => ({
+      time:
+        d.time ||
+        (d.timestamp
+          ? new Date(d.timestamp).toLocaleTimeString()
+          : ''),
+      value:
+        typeof d.value === 'number'
+          ? d.value
+          : typeof d.count === 'number'
+          ? d.count
+          : 0,
+    }));
+  }, [data]);
+
   if (loading) return <div style={S.page}>Loading...</div>;
   if (error) return <div style={S.page}>Error: {error}</div>;
 
-  const { overview, throughput, latency, topics } = data || {};
-  const throughputData = throughput?.throughput || [];
-  const topicsData = topics?.topics || [];
+  const overview = data?.overview || {};
+  const latency = data?.latency || {};
+  const topicsData = data?.topics?.topics || [];
   const priorityData = overview?.priority || [];
 
   return (
@@ -80,15 +105,25 @@ export default function Dashboard({ token, onLogout }) {
       {/* THROUGHPUT */}
       <div style={S.card}>
         <div style={S.cardTitle}>Throughput</div>
-        <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={throughputData}>
-            <CartesianGrid stroke="#1e1e2e" />
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip content={<CustomTooltip />} />
-            <Area type="monotone" dataKey="value" stroke="#63b3ed" fill="#63b3ed33" />
-          </AreaChart>
-        </ResponsiveContainer>
+
+        {throughputData.length === 0 ? (
+          <div>No throughput data</div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart data={throughputData}>
+              <CartesianGrid stroke="#1e1e2e" />
+              <XAxis dataKey="time" />
+              <YAxis />
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#63b3ed"
+                fill="#63b3ed33"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* LATENCY + PRIORITY */}
@@ -125,7 +160,9 @@ export default function Dashboard({ token, onLogout }) {
             <div>No data</div>
           ) : (
             topicsData.slice(0,5).map((t, i) => (
-              <div key={i}>{t.topic} — {t.count}</div>
+              <div key={i}>
+                {t.topic} — {t.count}
+              </div>
             ))
           )}
         </div>

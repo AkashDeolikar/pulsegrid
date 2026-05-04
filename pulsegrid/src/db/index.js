@@ -1,7 +1,11 @@
 const { Pool } = require('pg');
 const config = require('../config');
 
-const pool = new Pool(config.db);
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+    : config.db
+);
 
 // pool.on('connect', () => {
 //   console.log('PostgreSQL connected');
@@ -21,7 +25,7 @@ module.exports = {
   query: (text, params) => pool.query(text, params),
   getClient: () => pool.connect(),
 
-   close: async () => {
+  close: async () => {
     await pool.end();
   }
 };

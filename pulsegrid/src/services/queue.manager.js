@@ -1,6 +1,6 @@
 const { handleOfflineUsers } = require('./offline.sync.service');
 const { Queue, Worker } = require('bullmq');
-const { publisher } = require('../config/redis');
+const redis = require('../config/redis');
 const db = require('../db');
 
 const { recordEvent }  = require('./metrics.service');
@@ -65,7 +65,7 @@ const processJob = async (job) => {
   const startTime = Date.now();
 
   // 1. Publish to Redis → online subscribers
-  await publisher.publish(`event:${topic}`, JSON.stringify({
+  await redis.publisher.publish(`event:${topic}`, JSON.stringify({
     eventId, topic, payload, priority, timestamp,
   }));
 

@@ -1,4 +1,4 @@
-const { redisClient } = require('../config/redis');
+const redis = require('../config/redis');
 const { getThroughput } = require('./metrics.service');
 const { sendToUser } = require('./connection.manager');
 const { getOnlineUserIds } = require('./connection.manager');
@@ -54,9 +54,9 @@ const checkAnomaly = async (topic) => {
   };
 
   // Persist anomaly in Redis list (capped at 100 entries)
-  await redisClient.lpush('anomalies:log', JSON.stringify(anomaly));
-  await redisClient.ltrim('anomalies:log', 0, 99);
-  await redisClient.expire('anomalies:log', ANOMALY_TTL);
+  await redis.redisClient.lpush('anomalies:log', JSON.stringify(anomaly));
+  await redis.redisClient.ltrim('anomalies:log', 0, 99);
+  await redis.redisClient.expire('anomalies:log', ANOMALY_TTL);
 
   // Broadcast alert to ALL online users via WebSocket
   const onlineUsers = getOnlineUserIds();
@@ -76,7 +76,7 @@ const checkAnomaly = async (topic) => {
  * Fetch recent anomalies for the dashboard.
  */
 const getRecentAnomalies = async (limit = 20) => {
-  const raw = await redisClient.lrange('anomalies:log', 0, limit - 1);
+  const raw = await redis.redisClient.lrange('anomalies:log', 0, limit - 1);
   return raw.map(r => JSON.parse(r));
 };
 

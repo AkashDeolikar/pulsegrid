@@ -1,4 +1,4 @@
-const { redisClient } = require('../config/redis');
+const redis = require('../config/redis');
 
 // userId -> Set of WebSocket connections (user can have multiple tabs)
 const connections = new Map();
@@ -10,7 +10,7 @@ const addConnection = async (userId, ws) => {
   connections.get(userId).add(ws);
 
   // Mark user as online in Redis (expires in 30s, renewed on heartbeat)
-  await redisClient.setex(`presence:${userId}`, 30, 'online');
+  await redis.redisClient.setex(`presence:${userId}`, 30, 'online');
   console.log(`[CM] User ${userId} connected. Total connections: ${getTotalConnections()}`);
 };
 
@@ -20,7 +20,7 @@ const removeConnection = async (userId, ws) => {
     userConns.delete(ws);
     if (userConns.size === 0) {
       connections.delete(userId);
-      await redisClient.del(`presence:${userId}`);
+      await redis.redisClient.del(`presence:${userId}`);
       console.log(`[CM] User ${userId} fully disconnected`);
     }
   }

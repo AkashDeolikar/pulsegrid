@@ -1,5 +1,10 @@
 # ⚡ PulseGrid — Distributed Event Delivery Platform
 
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-60%25+-blue)
+![Node](https://img.shields.io/badge/node-20-green)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
+
 > A production-grade real-time messaging infrastructure with priority-based
 > delivery, offline sync, AI-powered routing, and live observability.
 

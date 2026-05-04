@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const { verifyToken } = require('./auth.service');
 const { syncOnReconnect } = require('./offline.sync.service');
 const { addConnection, removeConnection, sendToUser, getTotalConnections } = require('./connection.manager');
-const { subscriber } = require('../config/redis');
+const redis = require('../config/redis');
 const db = require('../db');
 
 let wss = null;
@@ -11,13 +11,13 @@ const initWebSocketServer = (httpServer) => {
   wss = new WebSocket.Server({ server: httpServer });
 
   // Subscribe to ALL event topics via Redis pattern
-  subscriber.psubscribe('event:*', (err) => {
+  redis.subscriber.psubscribe('event:*', (err) => {
     if (err) console.error('[WS] Redis psubscribe error:', err);
     else console.log('[WS] Subscribed to event:* pattern');
   });
 
   // When Redis delivers a message, find the right WS connection and push it
-  subscriber.on('pmessage', async (pattern, channel, message) => {
+  redis.subscriber.on('pmessage', async (pattern, channel, message) => {
     try {
       const data = JSON.parse(message);
       const topic = channel.replace('event:', '');
