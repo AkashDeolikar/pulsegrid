@@ -21,14 +21,17 @@ export default function QueueConsole({ token }) {
   const headers = { Authorization: `Bearer ${token}` };
 
   const fetchStats = useCallback(async () => {
-    try {
-      const res = await axios.get(`${config.API_BASE}/analytics/overview`, { headers });
-      setQueueStats(res.data.queues || { urgent:{}, normal:{}, low:{} });
-      setLastUpdated(new Date());
-    } catch (err) {
-      console.error('[QueueConsole] stats fetch failed:', err);
-    }
-  }, [token]);
+  try {
+    const res = await axios.get(`${config.API_BASE}/analytics/overview`, { headers });
+
+    console.log("🔥 API RESPONSE:", res.data);
+
+    setQueueStats(res.data.queues || { urgent:{}, normal:{}, low:{} });
+    setLastUpdated(new Date());
+  } catch (err) {
+    console.error('[QueueConsole] stats fetch failed:', err);
+  }
+}, [token]);
 
   const fetchFailed = useCallback(async () => {
     try {
