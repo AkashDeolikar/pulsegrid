@@ -39,6 +39,8 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "globalTeardown": "<rootDir>/jest.teardown.js",
     "testMatch": [
       "**/__tests__/**/*.test.js"
     ],

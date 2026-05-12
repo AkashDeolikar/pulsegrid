@@ -7,7 +7,6 @@ const app = createApp();
 afterAll(async () => {
   // Clean up test users after all tests
   await db.query(`DELETE FROM users WHERE email LIKE '%@testpulse.com'`);
-  await db.query('SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname=$1 AND pid<>pg_backend_pid()', ['pulsegrid_test']);
 });
 
 describe('POST /api/auth/register', () => {

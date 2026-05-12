@@ -136,10 +136,22 @@ const getQueueStats = async () => {
     };
 };
 
+const close = async () => {
+    await Promise.allSettled([
+        urgentWorker?.close?.(),
+        normalWorker?.close?.(),
+        lowWorker?.close?.(),
+        urgentQueue?.close?.(),
+        normalQueue?.close?.(),
+        lowQueue?.close?.(),
+    ]);
+};
+
 module.exports = {
     enqueueEvent,
     getQueueStats,
     urgentQueue,
     normalQueue,
     lowQueue,
+    close,
 };

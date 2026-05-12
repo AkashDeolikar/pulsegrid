@@ -64,7 +64,15 @@ const subscriber = createRedisClient('subscriber');
 // General — caching, presence, session data, metrics
 const redisClient = createRedisClient('general');
 
-module.exports = { publisher, subscriber, redisClient };
+const closeRedis = async () => {
+  await Promise.allSettled([
+    publisher?.quit?.(),
+    subscriber?.quit?.(),
+    redisClient?.quit?.(),
+  ]);
+};
+
+module.exports = { publisher, subscriber, redisClient, closeRedis };
 
 
 // const Redis = require('ioredis');

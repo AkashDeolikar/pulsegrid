@@ -6,6 +6,7 @@ const redis = require('../config/redis');
 const db = require('../db');
 
 let wss = null;
+let heartbeatInterval = null;
 
 const initWebSocketServer = (httpServer) => {
   wss = new WebSocket.Server({ server: httpServer });
@@ -100,7 +101,7 @@ const initWebSocketServer = (httpServer) => {
   });
 
   // Heartbeat interval — kill dead connections every 30s
-  const heartbeatInterval = setInterval(() => {
+  heartbeatInterval = setInterval(() => {
     wss.clients.forEach((ws) => {
       if (!ws.isAlive) {
         removeConnection(ws.userId, ws);
@@ -111,12 +112,25 @@ const initWebSocketServer = (httpServer) => {
     });
   }, 30000);
 
-  wss.on('close', () => clearInterval(heartbeatInterval));
-
   console.log('[WS] WebSocket server initialized');
   return wss;
 };
 
 const getWss = () => wss;
 
-module.exports = { initWebSocketServer, getWss };
+const closeWebSocketServer = async () => {
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
+  }
+  if (wss) {
+    await new Promise((resolve) => {
+      wss.close(() => {
+        wss = null;
+        resolve();
+      });
+    });
+  }
+};
+
+module.exports = { initWebSocketServer, getWss, closeWebSocketServer };

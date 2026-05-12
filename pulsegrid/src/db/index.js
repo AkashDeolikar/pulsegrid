@@ -58,21 +58,44 @@ const poolConfig = process.env.DATABASE_URL
       connectionTimeoutMillis: 5000,
     };
 
-const pool = new Pool(poolConfig);
+let pool;
 
-pool.on('connect', () => {
-  if (process.env.NODE_ENV !== 'test') {
-    console.log('[DB] PostgreSQL connected');
+const createPool = () => {
+  const newPool = new Pool(poolConfig);
+
+  newPool.on('connect', () => {
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('[DB] PostgreSQL connected');
+    }
+  });
+
+  newPool.on('error', (err) => {
+    console.error('[DB] PostgreSQL pool error:', err);
+    // Don't exit — let the pool recover on next query
+  });
+
+  return newPool;
+};
+
+const getPool = () => {
+  if (!pool || pool.ended) {
+    pool = createPool();
   }
-});
+  return pool;
+};
 
-pool.on('error', (err) => {
-  console.error('[DB] PostgreSQL pool error:', err);
-  // Don't exit — let the pool recover on next query
-});
+const close = async () => {
+  if (pool) {
+    await pool.end();
+    pool = null;
+  }
+};
 
 module.exports = {
-  query:     (text, params) => pool.query(text, params),
-  getClient: ()             => pool.connect(),
-  pool,
+  query:     (text, params) => getPool().query(text, params),
+  getClient: ()             => getPool().connect(),
+  close,
+  get pool() {
+    return getPool();
+  },
 };
