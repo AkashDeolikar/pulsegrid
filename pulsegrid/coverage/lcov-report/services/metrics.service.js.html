@@ -182,15 +182,15 @@
 <a name='L117'></a><a href='#L117'>117</a>
 <a name='L118'></a><a href='#L118'>118</a>
 <a name='L119'></a><a href='#L119'>119</a>
-<a name='L120'></a><a href='#L120'>120</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L120'></a><a href='#L120'>120</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -221,7 +221,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -241,7 +241,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -266,7 +266,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -283,7 +283,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -295,13 +295,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { redisClient } = require('../config/redis');
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const redis = require('../config/redis');
 &nbsp;
 const METRICS_TTL = 60 * 60 * 24; // 24 hours
 &nbsp;
@@ -313,7 +313,7 @@ const recordEvent = <span class="fstat-no" title="function not covered" >as</spa
   const now = <span class="cstat-no" title="statement not covered" >Date.now();</span>
   const minuteBucket = <span class="cstat-no" title="statement not covered" >Math.floor(now / 60000);</span> // current minute as integer
 &nbsp;
-  const pipeline = <span class="cstat-no" title="statement not covered" >redisClient.pipeline();</span>
+  const pipeline = <span class="cstat-no" title="statement not covered" >redis.redisClient.pipeline();</span>
 &nbsp;
   // 1. Throughput: increment events in this minute bucket
 <span class="cstat-no" title="statement not covered" >  pipeline.incr(`metrics:throughput:${minuteBucket}`);</span>
@@ -343,7 +343,7 @@ const recordEvent = <span class="fstat-no" title="function not covered" >as</spa
 const getThroughput = <span class="fstat-no" title="function not covered" >as</span>ync (minutes = <span class="branch-0 cbranch-no" title="branch not covered" >60)</span> =&gt; {
   const now = <span class="cstat-no" title="statement not covered" >Date.now();</span>
   const currentBucket = <span class="cstat-no" title="statement not covered" >Math.floor(now / 60000);</span>
-  const pipeline = <span class="cstat-no" title="statement not covered" >redisClient.pipeline();</span>
+  const pipeline = <span class="cstat-no" title="statement not covered" >redis.redisClient.pipeline();</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  for (let i = <span class="cstat-no" title="statement not covered" >minutes - 1;</span> i &gt;= 0; i--) {</span>
 <span class="cstat-no" title="statement not covered" >    pipeline.get(`metrics:throughput:${currentBucket - i}`);</span>
@@ -361,7 +361,7 @@ const getThroughput = <span class="fstat-no" title="function not covered" >as</s
  * Calculate P50, P95, P99 delivery latency from Redis sorted set.
  */
 const getLatencyPercentiles = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
-  const entries = <span class="cstat-no" title="statement not covered" >await redisClient.zrange('metrics:latency', 0, -1);</span>
+  const entries = <span class="cstat-no" title="statement not covered" >await redis.redisClient.zrange('metrics:latency', 0, -1);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  if (entries.length === 0) {</span>
 <span class="cstat-no" title="statement not covered" >    return { p50: 0, p95: 0, p99: 0, samples: 0 };</span>
@@ -386,10 +386,10 @@ const getLatencyPercentiles = <span class="fstat-no" title="function not covered
  * Get per-topic event counts.
  */
 const getTopicBreakdown = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
-  const keys = <span class="cstat-no" title="statement not covered" >await redisClient.keys('metrics:topic:*');</span>
+  const keys = <span class="cstat-no" title="statement not covered" >await redis.redisClient.keys('metrics:topic:*');</span>
 <span class="cstat-no" title="statement not covered" >  if (keys.length === 0) <span class="cstat-no" title="statement not covered" >return [];</span></span>
 &nbsp;
-  const pipeline = <span class="cstat-no" title="statement not covered" >redisClient.pipeline();</span>
+  const pipeline = <span class="cstat-no" title="statement not covered" >redis.redisClient.pipeline();</span>
 <span class="cstat-no" title="statement not covered" >  keys.forEach(<span class="fstat-no" title="function not covered" >k </span>=&gt; <span class="cstat-no" title="statement not covered" >pipeline.get(k))</span>;</span>
   const results = <span class="cstat-no" title="statement not covered" >await pipeline.exec();</span>
 &nbsp;
@@ -404,7 +404,7 @@ const getTopicBreakdown = <span class="fstat-no" title="function not covered" >a
  */
 const getPriorityBreakdown = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
   const priorities = <span class="cstat-no" title="statement not covered" >['urgent', 'normal', 'low'];</span>
-  const pipeline = <span class="cstat-no" title="statement not covered" >redisClient.pipeline();</span>
+  const pipeline = <span class="cstat-no" title="statement not covered" >redis.redisClient.pipeline();</span>
 <span class="cstat-no" title="statement not covered" >  priorities.forEach(<span class="fstat-no" title="function not covered" >p </span>=&gt; <span class="cstat-no" title="statement not covered" >pipeline.get(`metrics:priority:${p}`))</span>;</span>
   const results = <span class="cstat-no" title="statement not covered" >await pipeline.exec();</span>
 &nbsp;
@@ -427,7 +427,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-29T17:54:40.639Z
+                at 2026-05-12T11:21:38.706Z
             </div>
         <script src="../prettify.js"></script>
         <script>

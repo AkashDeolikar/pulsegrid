@@ -125,12 +125,12 @@
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -141,7 +141,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -153,7 +153,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -170,24 +170,24 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { redisClient } = require('../config/redis');
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const redis = require('../config/redis');
 &nbsp;
 // userId -&gt; Set of WebSocket connections (user can have multiple tabs)
 const connections = new Map();
@@ -199,7 +199,7 @@ const addConnection = <span class="fstat-no" title="function not covered" >as</s
 <span class="cstat-no" title="statement not covered" >  connections.get(userId).add(ws);</span>
 &nbsp;
   // Mark user as online in Redis (expires in 30s, renewed on heartbeat)
-<span class="cstat-no" title="statement not covered" >  await redisClient.setex(`presence:${userId}`, 30, 'online');</span>
+<span class="cstat-no" title="statement not covered" >  await redis.redisClient.setex(`presence:${userId}`, 30, 'online');</span>
 <span class="cstat-no" title="statement not covered" >  console.log(`[CM] User ${userId} connected. Total connections: ${getTotalConnections()}`);</span>
 };
 &nbsp;
@@ -209,7 +209,7 @@ const removeConnection = <span class="fstat-no" title="function not covered" >as
 <span class="cstat-no" title="statement not covered" >    userConns.delete(ws);</span>
 <span class="cstat-no" title="statement not covered" >    if (userConns.size === 0) {</span>
 <span class="cstat-no" title="statement not covered" >      connections.delete(userId);</span>
-<span class="cstat-no" title="statement not covered" >      await redisClient.del(`presence:${userId}`);</span>
+<span class="cstat-no" title="statement not covered" >      await redis.redisClient.del(`presence:${userId}`);</span>
 <span class="cstat-no" title="statement not covered" >      console.log(`[CM] User ${userId} fully disconnected`);</span>
     }
   }
@@ -256,7 +256,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-29T17:54:40.639Z
+                at 2026-05-12T11:21:38.706Z
             </div>
         <script src="../prettify.js"></script>
         <script>
