@@ -60,6 +60,10 @@ const poolConfig = process.env.DATABASE_URL
 
 const pool = new Pool(poolConfig);
 
+const closePool = async () => {
+  await pool.end();
+};
+
 pool.on('connect', () => {
   if (process.env.NODE_ENV !== 'test') {
     console.log('[DB] PostgreSQL connected');
@@ -75,4 +79,5 @@ module.exports = {
   query:     (text, params) => pool.query(text, params),
   getClient: ()             => pool.connect(),
   pool,
+  closePool,
 };
