@@ -21,7 +21,7 @@ export default function Navbar({ currentPage, onNavigate, onLogout, wsStatus }) 
   }[wsStatus] || 'offline';
 
   return (
-    <nav style={styles.nav}>
+    <nav style={styles.nav} role="navigation" aria-label="Primary application navigation">
       {/* Logo */}
       <div style={styles.logo}>
         <span style={styles.logoIcon}>⚡</span>
@@ -40,6 +40,7 @@ export default function Navbar({ currentPage, onNavigate, onLogout, wsStatus }) 
           const isActive = currentPage === id;
           return (
             <button
+              type="button"
               key={id}
               style={{
                 ...styles.tab,
@@ -49,6 +50,7 @@ export default function Navbar({ currentPage, onNavigate, onLogout, wsStatus }) 
               onClick={() => onNavigate(id)}
               onMouseEnter={() => setHovered(id)}
               onMouseLeave={() => setHovered(null)}
+              aria-current={isActive ? 'page' : undefined}
             >
               <span style={styles.tabIcon}>{icon}</span>
               <span style={styles.tabLabel}>{label}</span>
@@ -70,6 +72,7 @@ export default function Navbar({ currentPage, onNavigate, onLogout, wsStatus }) 
 
         {/* Sign out */}
         <button
+          type="button"
           style={{
             ...styles.signOut,
             ...(hovered === 'signout' ? styles.signOutHover : {}),
@@ -77,6 +80,7 @@ export default function Navbar({ currentPage, onNavigate, onLogout, wsStatus }) 
           onClick={onLogout}
           onMouseEnter={() => setHovered('signout')}
           onMouseLeave={() => setHovered(null)}
+          aria-label="Sign out"
         >
           Sign out
         </button>
@@ -91,13 +95,14 @@ const styles = {
     alignItems:     'center',
     gap:            '0',
     padding:        '0 24px',
-    height:         '56px',
-    background:     '#08080f',
-    borderBottom:   '1px solid #14142a',
+    minHeight:      '64px',
+    background:     'rgba(8, 10, 18, 0.96)',
+    borderBottom:   '1px solid rgba(255, 255, 255, 0.05)',
+    boxShadow:      '0 18px 40px rgba(0, 0, 0, 0.18)',
     position:       'sticky',
     top:            0,
     zIndex:         100,
-    fontFamily:     '"JetBrains Mono", "Fira Code", monospace',
+    fontFamily:     'Inter, system-ui, sans-serif',
     userSelect:     'none',
   },
   logo: {
@@ -125,7 +130,7 @@ const styles = {
   },
   logoSub: {
     fontSize:       '9px',
-    color:          '#2a2a4e',
+    color:          '#94949c',
     letterSpacing:  '0.12em',
     lineHeight:     1,
   },
@@ -138,33 +143,34 @@ const styles = {
   },
   tabs: {
     display:        'flex',
-    gap:            '4px',
+    gap:            '10px',
     flex:           1,
   },
   tab: {
     position:       'relative',
     display:        'flex',
     alignItems:     'center',
-    gap:            '6px',
+    gap:            '8px',
     background:     'transparent',
     border:         'none',
-    padding:        '6px 14px',
-    fontSize:       '11px',
-    fontWeight:     '500',
+    padding:        '10px 16px',
+    fontSize:       '12px',
+    fontWeight:     '600',
     cursor:         'pointer',
-    borderRadius:   '6px',
-    letterSpacing:  '0.05em',
-    color:          '#3a3a5c',
-    transition:     'color 0.15s, background 0.15s',
+    borderRadius:   '12px',
+    letterSpacing:  '0.08em',
+    color:          '#cbd5e1',
+    transition:     'all 0.2s ease',
     fontFamily:     'inherit',
   },
   tabActive: {
-    color:          '#8b9cf4',
-    background:     '#10102a',
+    color:          '#eff6ff',
+    background:     'rgba(91, 108, 244, 0.16)',
+    boxShadow:      '0 0 0 1px rgba(91, 108, 244, 0.14)',
   },
   tabHover: {
-    color:          '#5a5a7c',
-    background:     '#0e0e1e',
+    color:          '#e2e8f0',
+    background:     'rgba(255, 255, 255, 0.04)',
   },
   tabIcon: {
     fontSize:       '12px',
@@ -191,42 +197,45 @@ const styles = {
   wsBadge: {
     display:        'flex',
     alignItems:     'center',
-    gap:            '6px',
-    padding:        '4px 10px',
-    background:     '#0e0e1e',
-    border:         '1px solid #14142a',
-    borderRadius:   '20px',
+    gap:            '8px',
+    padding:        '6px 12px',
+    background:     'rgba(91, 108, 244, 0.12)',
+    borderRadius:   '999px',
+    border:         '1px solid rgba(91, 108, 244, 0.18)',
   },
   wsDot: {
-    width:          '6px',
-    height:         '6px',
+    width:          '8px',
+    height:         '8px',
     borderRadius:   '50%',
     flexShrink:     0,
   },
   wsLabel: {
     fontSize:       '10px',
-    fontWeight:     '500',
-    letterSpacing:  '0.06em',
+    fontWeight:     '700',
+    letterSpacing:  '0.08em',
+    color:          '#eff6ff',
+    textTransform:  'uppercase',
   },
   rightDivider: {
     width:          '1px',
     height:         '20px',
-    background:     '#14142a',
+    background:     'rgba(255, 255, 255, 0.08)',
   },
   signOut: {
     background:     'transparent',
-    border:         '1px solid #14142a',
-    borderRadius:   '5px',
-    color:          '#3a3a5c',
-    fontSize:       '10px',
-    padding:        '5px 12px',
+    border:         '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius:   '999px',
+    color:          '#cbd5e1',
+    fontSize:       '11px',
+    padding:        '8px 14px',
     cursor:         'pointer',
-    letterSpacing:  '0.06em',
+    letterSpacing:  '0.08em',
     fontFamily:     'inherit',
-    transition:     'all 0.15s',
+    transition:     'all 0.2s ease',
   },
   signOutHover: {
-    borderColor:    '#2a2a4e',
-    color:          '#5a5a7c',
+    borderColor:    '#5b6cf4',
+    background:     'rgba(91, 108, 244, 0.12)',
+    color:          '#eff6ff',
   },
 };
